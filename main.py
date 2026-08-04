@@ -1,3 +1,5 @@
+import json
+
 class Question:
     total = 0
     score = 0
@@ -23,24 +25,80 @@ class Question:
 
         Question.total += 1
 
+    def to_dict(self):
+        return {
+            "question": self.question,
+            "answer": self.answer,
+            "choices": self.choices
+        }
+
+def save_questions(questions):
+    data = []
+
+    for quiz in questions:
+        data.append(quiz.to_dict())
+
+    with open("questions.json", "w", encoding="utf-8") as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
+
+def load_questions():
+    try:
+        with open("questions.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        questions = []
+
+        for item in data:
+            quiz = Question(
+                item["question"],
+                item["answer"],
+                item["choices"]
+            )
+            questions.append(quiz)
+
+        return questions
+
+    except FileNotFoundError:
+        return []
+
+    except json.JSONDecodeError:
+        return []
 
 # 기본 퀴즈 목록
-questions = [
-    Question("대한민국의 수도는 어디일까요?", 2,
-             ["부산", "서울", "대전", "광주"]),
+questions = load_questions()
 
-    Question("지구에서 가장 큰 바다는?", 3,
-             ["대서양", "인도양", "태평양", "북극해"]),
+if not questions:
+    questions = [
+        Question(
+            "대한민국의 수도는 어디일까요?",
+            2,
+            ["부산", "서울", "대전", "광주"]
+        ),
+        Question(
+            "지구에서 가장 큰 바다는?",
+            3,
+            ["대서양", "인도양", "태평양", "북극해"]
+        ),
+        Question(
+            "세계에서 가장 높은 산은?",
+            1,
+            ["에베레스트", "K2", "칸첸중가", "로체"]
+        ),
+        Question(
+            "세계에서 가장 긴 강은?",
+            2,
+            ["아마존강", "나일강", "양쯔강", "미시시피강"]
+        ),
+        Question(
+            "세계에서 가장 큰 뜨거운 사막은?",
+            1,
+            ["사하라 사막", "고비 사막", "아타카마 사막", "칼라하리 사막"]
+        )
+    ]
 
-    Question("세계에서 가장 높은 산은?", 1,
-             ["에베레스트", "K2", "칸첸중가", "로체"]),
+    save_questions(questions)
 
-    Question("세계에서 가장 긴 강은?", 2,
-             ["아마존강", "나일강", "양쯔강", "미시시피강"]),
 
-    Question("세계에서 가장 큰 사막은?", 1,
-             ["사하라", "고비", "아타카마", "칸쿤"])
-]
 
 print("-" * 30)
 print("선영의 퀴즈 게임".center(25))
@@ -68,19 +126,51 @@ if choice == 1:
     print(f"총 {Question.total}문제 중 {Question.score}문제를 맞추셨습니다.")
     print(f"점수: {Question.score / Question.total * 100:.2f}점")
 
-if choice == 2:
+elif choice == 2:
     print("퀴즈 추가 기능을 실행합니다.\n")
 
-    question_text = input("문제를 입력하세요: ")
-    answer = int(input("정답 번호를 입력하세요 (1~4): "))
-    choices = []
+    while True:
+        question_text = input("문제를 입력하세요: ").strip()
+
+        if question_text:
+            break
+
+        print("문제 내용을 비워둘 수 없습니다.")
+
+    new_choices = []
 
     for i in range(4):
-        choice_text = input(f"선택지 {i + 1}을 입력하세요: ")
-        choices.append(choice_text)
+        while True:
+            choice_text = input(f"선택지 {i + 1}을 입력하세요: ").strip()
 
-    new_question = Question(question_text, answer, choices)
+            if choice_text:
+                new_choices.append(choice_text)
+                break
+
+            print("선택지를 비워둘 수 없습니다.")
+
+    while True:
+        try:
+            answer = int(input("정답 번호를 입력하세요(1~4): "))
+
+            if 1 <= answer <= 4:
+                break
+
+            print("정답 번호는 1부터 4 사이여야 합니다.")
+
+        except ValueError:
+            print("숫자만 입력하세요.")
+
+    new_question = Question(
+        question_text,
+        answer,
+        new_choices
+    )
+
     questions.append(new_question)
+    save_questions(questions)
 
-    print("퀴즈가 추가되었습니다.\n")
+    print("퀴즈가 저장되었습니다.")
+    print(f"현재 저장된 퀴즈: {len(questions)}개")
+
 
