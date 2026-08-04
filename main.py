@@ -32,6 +32,7 @@ class Question:
             "choices": self.choices
         }
 
+#json 파일에 퀴즈를 저장하고 불러오는 함수
 def save_questions(questions):
     data = []
 
@@ -41,6 +42,7 @@ def save_questions(questions):
     with open("questions.json", "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
+#json 파일에서 퀴즈를 불러오는 함수
 def load_questions():
     try:
         with open("questions.json", "r", encoding="utf-8") as file:
@@ -63,6 +65,17 @@ def load_questions():
 
     except json.JSONDecodeError:
         return []
+
+4#json 파일에서 최고 점수를 불러오는 함수
+def maxscore():
+    try:
+        with open("score.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+            return data.get("max_score", False)
+    except FileNotFoundError:
+        return 0
+    except json.JSONDecodeError:
+         return 0
 
 # 기본 퀴즈 목록
 questions = load_questions()
@@ -122,9 +135,14 @@ if choice == 1:
     for i, quiz in enumerate(questions, start=1):
         print(f"문제 {i}")
         quiz.solve()
-
+    score = Question.score / Question.total * 100
     print(f"총 {Question.total}문제 중 {Question.score}문제를 맞추셨습니다.")
-    print(f"점수: {Question.score / Question.total * 100:.2f}점")
+    print(f"점수: {score:.2f}점")
+    if score > maxscore():
+        print("축하합니다! 최고 점수를 갱신했습니다.")
+        with open("score.json", "w", encoding="utf-8") as file:
+            json.dump({"max_score": score}, file, ensure_ascii=False, indent=4)
+
 
 elif choice == 2:
     print("퀴즈 추가 기능을 실행합니다.\n")
@@ -181,4 +199,14 @@ elif choice == 3:
     else:
         for i, quiz in enumerate(questions, start=1):
             print(f"문제 {i}: {quiz.question}")
-            
+
+elif choice == 4:
+    print("점수 확인 기능을 실행합니다.\n")
+    if maxscore() > 0:
+        print(f"최고 점수: {maxscore()}점")
+    else:
+        print("아직 최고 점수가 없습니다.")
+
+    
+    
+
