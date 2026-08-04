@@ -173,4 +173,12 @@ elif choice == 2:
     print("퀴즈가 저장되었습니다.")
     print(f"현재 저장된 퀴즈: {len(questions)}개")
 
+elif choice == 3:
+    print("퀴즈 목록 기능을 실행합니다.\n")
 
+    if not questions:
+        print("저장된 퀴즈가 없습니다.")
+    else:
+        for i, quiz in enumerate(questions, start=1):
+            print(f"문제 {i}: {quiz.question}")
+            
