@@ -1,7 +1,7 @@
 import json
 
 
-class Question:
+class quiz:
     def __init__(self, question, answer, choices):
         self.question = question
         self.answer = answer
@@ -44,27 +44,27 @@ class QuizGame:
 
     def get_default_questions(self):
         return [
-            Question(
+            quiz(
                 "대한민국의 수도는 어디일까요?",
                 2,
                 ["부산", "서울", "대전", "광주"]
             ),
-            Question(
+            quiz(
                 "지구에서 가장 큰 바다는?",
                 3,
                 ["대서양", "인도양", "태평양", "북극해"]
             ),
-            Question(
+            quiz(
                 "세계에서 가장 높은 산은?",
                 1,
                 ["에베레스트", "K2", "칸첸중가", "로체"]
             ),
-            Question(
+            quiz(
                 "세계에서 가장 긴 강은?",
                 2,
                 ["아마존강", "나일강", "양쯔강", "미시시피강"]
             ),
-            Question(
+            quiz(
                 "세계에서 가장 큰 뜨거운 사막은?",
                 1,
                 ["사하라 사막", "고비 사막", "아타카마 사막", "칼라하리 사막"]
@@ -131,7 +131,7 @@ class QuizGame:
                     raise ValueError
 
                 loaded_questions.append(
-                    Question(
+                    quiz(
                         question_text,
                         answer,
                         choices
@@ -284,7 +284,7 @@ class QuizGame:
             except ValueError:
                 print("숫자만 입력하세요.")
 
-        new_question = Question(
+        new_question = quiz(
             question_text,
             answer,
             choices
